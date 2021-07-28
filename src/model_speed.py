@@ -6,7 +6,7 @@ import torch
 import util
 from ignite.engine import Events
 
-def compute_quantization(baseFolder, conf, samples):
+def measure_speed(baseFolder, conf, samples):
     model = conf['model']
     outputs = conf['outputs']
     dataLoader = conf['dataLoader']
@@ -33,7 +33,7 @@ def compute_quantization(baseFolder, conf, samples):
     timer.attach(evaluator, start=Events.EPOCH_STARTED, resume=Events.ITERATION_STARTED,
                             pause=Events.ITERATION_COMPLETED, step=Events.ITERATION_COMPLETED)
 
-    util.tqdmHandler(evaluator, desc = desc)
+    util.tqdmHandler(evaluator)
     @evaluator.on(ignite.engine.Events.ITERATION_COMPLETED(once = samples))
     def terminate_evaluation(evaluator):
         evaluator.terminate_epoch()
@@ -48,14 +48,14 @@ if __name__ == '__main__':
     parser.add_argument('--samples', type = int, default = 10, help = 'number of samples to run (higher means more precise speed results')
     args = parser.parse_args()
     
-    if not args.from_log:
-        try:
-            confFile = f'{baseFolder}/conf.py'
-            conf = util.loadConfigurationFile(confFile).conf
-        except ModuleNotFoundError:
-            baseFolder = os.path.normpath(args.run_name)
-            confFile = os.path.normpath(f'{baseFolder}/../../configs.py')
-            cfg = util.loadConfigurationFile(confFile)
-            conf = cfg.configs[baseFolder.split('/')[-2]]
+    try:
+        baseFolder = f'runs/{args.run_name}'
+        confFile = f'{baseFolder}/conf.py'
+        conf = util.loadConfigurationFile(confFile).conf
+    except ModuleNotFoundError:
+        baseFolder = os.path.normpath(args.run_name)
+        confFile = os.path.normpath(f'{baseFolder}/../../configs.py')
+        cfg = util.loadConfigurationFile(confFile)
+        conf = cfg.configs[baseFolder.split('/')[-2]]
 
-        measure_speed(baseFolder, conf, args.samples)
+    measure_speed(baseFolder, conf, args.samples)
