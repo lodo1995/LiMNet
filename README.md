@@ -2,7 +2,7 @@
 
 ### The paper
 
-Giaretta, L., Lekssays, A., et al., _LiMNet: Early-Stage Detection of IoT Botnets with Lightweight Memory Networks_, **currently under peer-review**
+Giaretta, L., Lekssays, A., et al., _LiMNet: Early-Stage Detection of IoT Botnets with Lightweight Memory Networks_, 2021, in European Symposium on Research in Computer Security (ESORICS 2021)
 
 ### How to Run the Experiments
 
